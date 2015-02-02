@@ -2,6 +2,38 @@ require 'rest_client'
 
 
 class Zoho
+
+  def self.get_orders
+    url, auth, app_owner = Zoho.generate_url('order')
+    params = { :params => { 'authtoken'    => auth,
+      'scope'        => 'creatorapi',
+      'zc_ownername' => app_owner,
+      'raw'          => true } }
+      request              = Zoho.get(url, params)
+      if request && !request.empty? && request != "{}"
+        orders  = []
+        request = JSON.parse(request)
+        unless request["OrderEntity"].empty?
+          request["OrderEntity"].each do |order|
+            a = ZohoOrder.new(invoiced_budget: order['Invoiced_Budget'].split('$ ')[1].gsub(',',''),
+                                 allocatable_budget: order['Allocatable_Budget'].split('$ ')[1].gsub(',',''),
+                                 name: order['Comment'],
+                                 description: order['Description'],
+                                 team:{id:order['Team'].split('OpsWay')[1].to_i})
+            if a.save
+              orders << a
+            else
+              binding.pry
+              puts a.errors
+            end
+          end
+        end
+      end
+      orders
+  end
+
+  private
+
   def self.generate_url(action)
     server    = 'https://creator.zoho.com/api/'
     protocol  = 'json/'
