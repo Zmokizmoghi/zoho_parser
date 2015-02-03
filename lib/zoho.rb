@@ -3,6 +3,23 @@ require 'rest_client'
 
 class Zoho
 
+  def self.get_task(id)
+    url, auth, app_owner = Zoho.generate_url('issue')
+    params = { :params => { 'authtoken'    => auth,
+      'scope'        => 'creatorapi',
+      'zc_ownername' => app_owner,
+      'criteria'     => "Issue_ID = #{id}",
+      'raw'          => true } }
+      request              = Zoho.get(url, params)
+      if request && !request.empty? && request != "{}"
+        issues  = []
+        request = JSON.parse(request)
+        unless request["Issue"].empty?
+          return request['Issue'][0]
+        end
+      end
+  end
+
   def self.get_orders
     url, auth, app_owner = Zoho.generate_url('order')
     params = { :params => { 'authtoken'    => auth,
@@ -15,22 +32,32 @@ class Zoho
         request = JSON.parse(request)
         unless request["OrderEntity"].empty?
           request["OrderEntity"].each do |order|
-            a = ZohoOrder.new(invoiced_budget: order['Invoiced_Budget'].split('$ ')[1].gsub(',',''),
-                                 allocatable_budget: order['Allocatable_Budget'].split('$ ')[1].gsub(',',''),
-                                 name: order['Comment'],
-                                 description: order['Description'],
-                                 team:{id:order['Team'].split('OpsWay')[1].to_i})
-            if a.save
-              orders << a
-            else
-              binding.pry
-              puts a.errors
-            end
+            orders << order
           end
         end
       end
       orders
   end
+
+  def self.get_issues_for_order(zoho_id)
+    url, auth, app_owner = Zoho.generate_url('orders_for_issue')
+    params = { :params => { 'authtoken'    => auth,
+      'scope'        => 'creatorapi',
+      'zc_ownername' => app_owner,
+      'criteria'     => "OrderEntity = #{zoho_id}",
+      'raw'          => true } }
+      request              = Zoho.get(url, params)
+      if request && !request.empty? && request != "{}"
+        issues  = []
+        request = JSON.parse(request)
+        unless request["IssueOrder"].empty?
+          request["IssueOrder"].each do |issue|
+            issues << issue
+          end
+        end
+      end
+      issues
+    end
 
   private
 

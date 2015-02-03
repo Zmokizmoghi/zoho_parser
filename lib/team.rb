@@ -15,4 +15,10 @@ class Team < ActiveResource::Base
       "#{prefix(prefix_options)}#{collection_name}#{query_string(query_options)}"
     end
   end
+
+  def self.find_by_name(name)
+    all_records = Team.all
+    all_records.each { |r| return Team.find(r.id) if r.name == name }
+    nil
+  end
 end
