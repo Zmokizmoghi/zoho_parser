@@ -19,14 +19,17 @@ if __FILE__ == $PROGRAM_NAME
   orders = Zoho.get_orders
   orders.each do |order|
     team = Team.find_by_name(order['Team'])
-    a = ZohoOrder.new(invoiced_budget: order['Invoiced_Budget'].split('$ ')[1].gsub(',',''),
-                         allocatable_budget: order['Allocatable_Budget'].split('$ ')[1].gsub(',',''),
-                         name: order['Comment'],
-                         description: order['Description'],
-                         team:{id:team.id})
-    unless a.save
-      puts " Order #{a.name} wont save! Error #{a.errors['message']}"
-      next
+    order = ZohoOrder.find_by_name(order['Comment'])
+    unless order.present?
+      order = ZohoOrder.new(invoiced_budget: order['Invoiced_Budget'].split('$ ')[1].gsub(',',''),
+                            allocatable_budget: order['Allocatable_Budget'].split('$ ')[1].gsub(',',''),
+                            name: order['Comment'],
+                            description: order['Description'],
+                            team:{id:team.id})
+      unless a.save
+        puts " Order #{a.name} wont save! Error #{a.errors['message']}"
+        next
+      end
     end
     issues = Zoho.get_issues_for_order(order['ID'])
     query = []
@@ -36,14 +39,10 @@ if __FILE__ == $PROGRAM_NAME
       unless task
         task = Task.create external_id: issue['Issue']
       end
+      query = []
       query << {'order_id' => a.id, 'budget' => issue['allocated_budget'].split('$ ')[1]}
-    end
-    unless query.empty?
       Task.find(task.id).post(:budget, {}, {'budget' => query}.to_json)
-    end
-    issues.each do |issue|
       t = Zoho.get_task(issue['Issue'])
-      task = Task.find_by_external_id issue['Issue']
       if t['Resolver'].present?
         begin
           task.post(:resolver, {}, {'user_id' => User.find_by_name(t['Resolver']).id}.to_json)

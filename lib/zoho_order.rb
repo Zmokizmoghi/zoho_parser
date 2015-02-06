@@ -15,4 +15,10 @@ class ZohoOrder < ActiveResource::Base
       "#{prefix(prefix_options)}#{collection_name}#{query_string(query_options)}"
     end
   end
+
+  def find_by_name(name)
+    all_records = Order.all
+    all_records.each { |r| return Order.find(r.id) if r.name == name }
+    nil
+  end
 end
