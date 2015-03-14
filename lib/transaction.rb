@@ -1,7 +1,7 @@
 require 'active_resource'
 class Transaction < ActiveResource::Base
 
-  self.site = 'http://localhost'
+  self.site = 'http://tocat.clients.opsway.com'
   self.collection_name = 'transactions'
   self.element_name = 'transaction'
 

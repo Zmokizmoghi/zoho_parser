@@ -1,5 +1,5 @@
 class Task < ActiveResource::Base
-  self.site = 'http://localhost'
+  self.site = 'http://tocat.clients.opsway.com'
   self.collection_name = 'tasks'
   self.element_name = 'task'
 

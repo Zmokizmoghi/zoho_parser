@@ -1,7 +1,7 @@
 require 'active_resource'
 class Order < ActiveResource::Base
 
-  self.site = 'http://localhost'
+  self.site = 'http://tocat.clients.opsway.com'
   self.collection_name = 'orders'
   self.element_name = 'order'
 

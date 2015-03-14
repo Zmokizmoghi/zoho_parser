@@ -1,7 +1,7 @@
 require 'active_resource'
 class Invoice < ActiveResource::Base
 
-  self.site = 'http://localhost'
+  self.site = 'http://tocat.clients.opsway.com'
   self.collection_name = 'invoices'
   self.element_name = 'invoice'
 

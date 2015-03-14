@@ -1,7 +1,7 @@
 require 'active_resource'
 class Team < ActiveResource::Base
 
-  self.site = 'http://localhost'
+  self.site = 'http://tocat.clients.opsway.com'
   self.collection_name = 'teams'
   self.element_name = 'team'
 

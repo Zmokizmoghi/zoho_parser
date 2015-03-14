@@ -1,7 +1,7 @@
 require 'active_resource'
 class User < ActiveResource::Base
 
-  self.site = 'http://localhost'
+  self.site = 'http://tocat.clients.opsway.com'
   self.collection_name = 'users'
   self.element_name = 'user'
 
