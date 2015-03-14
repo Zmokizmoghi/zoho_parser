@@ -1,9 +1,9 @@
 require 'active_resource'
-class Team < ActiveResource::Base
+class Order < ActiveResource::Base
 
   self.site = 'http://localhost'
-  self.collection_name = 'teams'
-  self.element_name = 'team'
+  self.collection_name = 'orders'
+  self.element_name = 'order'
 
 
   class << self
@@ -18,9 +18,22 @@ class Team < ActiveResource::Base
     end
   end
 
+
+  def set_invoice(invoice)
+    begin
+      connection.post("#{Order.prefix}/order/#{self.id}/invoice", {invoice_id: invoice.id}.to_json)
+    rescue => error
+      # TODO add logger
+      return false, error
+    end
+    return true, nil
+  end
+
   def self.find_by_name(name)
-    all_records = Team.find(:all, params: {limit:1000000000})
-    all_records.each { |r| return Team.find(r.id) if r.name == name }
+    all_records = Order.find(:all, params: {limit:1000000000})
+    unless all_records.count == 0
+      all_records.each { |r| return Order.find(r.id) if r.name == name }
+    end
     nil
   end
 end
