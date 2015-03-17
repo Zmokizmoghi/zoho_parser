@@ -28,7 +28,6 @@ if __FILE__ == $PROGRAM_NAME
   Order.site = site
   Task.site = site
   Team.site = site
-  Transaction.site = site
   User.site = site
   start_time = Time.now
 
