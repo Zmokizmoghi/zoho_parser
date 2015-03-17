@@ -23,6 +23,13 @@ require_relative 'lib/patches/active_resource_errors'
 
 
 if __FILE__ == $PROGRAM_NAME
+  site = 'http://localhost'
+  Invoice.site = site
+  Order.site = site
+  Task.site = site
+  Team.site = site
+  Transaction.site = site
+  User.site = site
   start_time = Time.now
 
   Zoho.get_invoices.each do |invoice|
@@ -106,6 +113,7 @@ if __FILE__ == $PROGRAM_NAME
                             allocatable_budget: order.a_budget.split('$ ')[1].gsub(',',''),
                             name: order.comment,
                             description: order.description,
+                            completed: order.completed,
                             team:{id:team.id})
       unless order_record.save
         puts " Order #{order_record.name} wont save! Error #{order_record.errors['message']}"
