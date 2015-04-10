@@ -35,12 +35,13 @@ class Zoho
     end
   end
 
-  def self.get_transactions
+  def self.get_transactions(login)
     url, auth, app_owner = Zoho.generate_url('get_transactions')
     params = { :params => { 'authtoken'    => auth,
       'scope'        => 'creatorapi',
       'zc_ownername' => app_owner,
-      'raw'          => true } }
+      'raw'          => true,
+      'criteria'     => login } }
     request              = Zoho.get(url, params)
     if request && !request.empty? && request != "{}"
       issues  = []

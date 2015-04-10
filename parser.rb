@@ -30,8 +30,16 @@ if __FILE__ == $PROGRAM_NAME
   Team.site = site
   User.site = site
   start_time = Time.now
+  puts "press y to accept records count"
+  status = true
+  while !status do
+    invoices = Zoho.get_invoices
+    puts "Invoices - #{invoices.count}"
+    input = gets
+    status = true if input == "y\n"
+  end
 
-  Zoho.get_invoices.each do |invoice|
+  invoices.each do |invoice|
     params = {}
     params[:paid] = invoice["Paid"]
     params[:external_id] = invoice["Number"]
@@ -40,7 +48,15 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Invoices saved"
 
-  Zoho.get_sub_orders.each do |record|
+  status = true
+  while !status do
+    suborders = Zoho.get_sub_orders
+    puts "Suborders - #{suborders.count}"
+    input = gets
+    status = true if input == "y\n"
+  end
+
+  suborders.each do |record|
     params = {}
     params[:main_order] = record["MainOrder"]
     params[:sub_order] = record["SubOrder"]
@@ -48,8 +64,15 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Suborders saved"
 
+  status = true
+  while !status do
+    orders = Zoho.get_orders
+    puts("Orders - #{orders.count}")
+    input = gets
+    status = true if input == "y\n"
+  end
 
-  Zoho.get_orders.each do |record|
+  orders.each do |record|
     params = {}
     params[:comment] = record["Comment"]
     params[:team] = record["Team"]
@@ -58,13 +81,21 @@ if __FILE__ == $PROGRAM_NAME
     params[:a_budget] = record["Allocatable_Budget"]
     params[:invoice] = record["Invoice"]
     params[:completed] = record["Completed"]
+    params[:paid] = record["Paid"]
     params[:number] = record["Number"]
     DB::Order.create!(params)
   end
   puts "Orders saved"
 
+  status = true
+  while !status do
+    tasks = Zoho.get_tasks
+    puts("Tasks - #{tasks.count}")
+    input = gets
+    status = true if input == "y\n"
+  end
 
-  Zoho.get_tasks.each do |record|
+  tasks.each do |record|
     params = {}
     params[:external_id] = record["Issue_ID"]
     params[:resolver] = record["Resolver"]
@@ -73,8 +104,15 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Tasks saved"
 
+  status = true
+  while !status do
+    budgets = Zoho.get_task_orders
+    puts("TaskOrders - #{budgets.count}")
+    input = gets
+    status = true if input == "y\n"
+  end
 
-  Zoho.get_task_orders.each do |record|
+  budgets.each do |record|
     params = {}
     params[:issue_id] = record["Issue"]
     params[:order_number] = record["OrderEntity"]
@@ -172,6 +210,7 @@ if __FILE__ == $PROGRAM_NAME
     end
   end
   puts "Invoices was paid!"
+
   puts "Check issues..."
 
   Task.find(:all, params:{limit:10000000}).each do |task|
@@ -196,6 +235,7 @@ if __FILE__ == $PROGRAM_NAME
     zoho = DB::Order.where(comment:order.name).first
     order = Order.find(order.id)
     puts "Order #{order.id} has wrong team" if zoho.team != order.team.name
+    puts "Order #{order.id} has wrong paid" if zoho.paid != order.paid
     puts "Order #{order.id} has wrong invoiced budget" if zoho.i_budget.split('$ ')[1].gsub(',','').to_f != order.invoiced_budget
     puts "Order #{order.id} has wrong allocatable budget" if zoho.a_budget.split('$ ')[1].gsub(',','').to_f != order.allocatable_budget
   end

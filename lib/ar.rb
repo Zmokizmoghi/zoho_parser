@@ -19,6 +19,7 @@ ActiveRecord::Schema.define do
       table.column :invoice,      :string
       table.column :description,  :string
       table.column :completed,    :boolean
+      table.column :paid,    :boolean
       table.column :number,       :integer
     end
   end
@@ -69,4 +70,3 @@ module DB
     self.table_name = 'issue_orders'
   end
 end
-
