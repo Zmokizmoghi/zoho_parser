@@ -31,7 +31,7 @@ if __FILE__ == $PROGRAM_NAME
   User.site = site
   start_time = Time.now
   puts "press y to accept records count"
-  status = true
+  status = false
   while !status do
     invoices = Zoho.get_invoices
     puts "Invoices - #{invoices.count}"
@@ -48,7 +48,7 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Invoices saved"
 
-  status = true
+  status = false
   while !status do
     suborders = Zoho.get_sub_orders
     puts "Suborders - #{suborders.count}"
@@ -64,7 +64,7 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Suborders saved"
 
-  status = true
+  status = false
   while !status do
     orders = Zoho.get_orders
     puts("Orders - #{orders.count}")
@@ -87,7 +87,7 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Orders saved"
 
-  status = true
+  status = false
   while !status do
     tasks = Zoho.get_tasks
     puts("Tasks - #{tasks.count}")
@@ -104,7 +104,7 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Tasks saved"
 
-  status = true
+  status = false
   while !status do
     budgets = Zoho.get_task_orders
     puts("TaskOrders - #{budgets.count}")
