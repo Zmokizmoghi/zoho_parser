@@ -20,8 +20,6 @@ require_relative 'lib/user'
 require_relative 'lib/ar'
 require_relative 'lib/patches/active_resource_errors'
 
-
-
 if __FILE__ == $PROGRAM_NAME
   site = 'http://localhost'
   Invoice.site = site
@@ -30,16 +28,8 @@ if __FILE__ == $PROGRAM_NAME
   Team.site = site
   User.site = site
   start_time = Time.now
-  puts "press y to accept records count"
-  status = false
-  while !status do
-    invoices = Zoho.get_invoices
-    puts "Invoices - #{invoices.count}"
-    input = gets
-    status = true if input == "y\n"
-  end
 
-  invoices.each do |invoice|
+  Zoho.get_invoices.each do |invoice|
     params = {}
     params[:paid] = invoice["Paid"]
     params[:external_id] = invoice["Number"]
@@ -48,15 +38,7 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Invoices saved"
 
-  status = false
-  while !status do
-    suborders = Zoho.get_sub_orders
-    puts "Suborders - #{suborders.count}"
-    input = gets
-    status = true if input == "y\n"
-  end
-
-  suborders.each do |record|
+  Zoho.get_sub_orders.each do |record|
     params = {}
     params[:main_order] = record["MainOrder"]
     params[:sub_order] = record["SubOrder"]
@@ -64,15 +46,8 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Suborders saved"
 
-  status = false
-  while !status do
-    orders = Zoho.get_orders
-    puts("Orders - #{orders.count}")
-    input = gets
-    status = true if input == "y\n"
-  end
 
-  orders.each do |record|
+  Zoho.get_orders.each do |record|
     params = {}
     params[:comment] = record["Comment"]
     params[:team] = record["Team"]
@@ -87,15 +62,8 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Orders saved"
 
-  status = false
-  while !status do
-    tasks = Zoho.get_tasks
-    puts("Tasks - #{tasks.count}")
-    input = gets
-    status = true if input == "y\n"
-  end
 
-  tasks.each do |record|
+  Zoho.get_tasks.each do |record|
     params = {}
     params[:external_id] = record["Issue_ID"]
     params[:resolver] = record["Resolver"]
@@ -104,15 +72,7 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "Tasks saved"
 
-  status = false
-  while !status do
-    budgets = Zoho.get_task_orders
-    puts("TaskOrders - #{budgets.count}")
-    input = gets
-    status = true if input == "y\n"
-  end
-
-  budgets.each do |record|
+  Zoho.get_task_orders.each do |record|
     params = {}
     params[:issue_id] = record["Issue"]
     params[:order_number] = record["OrderEntity"]
